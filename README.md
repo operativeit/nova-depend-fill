@@ -1,12 +1,17 @@
 # Installation
 
 ```bash
+<<<<<<< HEAD
 composer require eom-plus/nova-depend-fill
+=======
+composer require klepak/nova-depend-fill
+>>>>>>> 7a753db98b6612af7d081a867a559a6b208f36db
 ```
 
 # Description
 
 Fill Laravel Nova field based on value from other field.
+<<<<<<< HEAD
 This custom field is for Nova 4 only and it's based on the original work
 https://github.com/klepak/nova-depend-fill/
 
@@ -62,3 +67,24 @@ DependFill::make('template')
 ])
 ```
 
+=======
+# Usage
+
+```php
+DependFill::make('Text')
+    ->field(
+        Textarea::make('Text')
+    )
+    ->dependsOn(
+        Select::make('Template')
+            ->options([
+                1 => 'Template 1',
+                2 => 'Template 2',
+            ])
+    )
+    ->values([
+        1 => 'template 1 text',
+        2 => 'template 2 text'
+    ])
+```
+>>>>>>> 7a753db98b6612af7d081a867a559a6b208f36db

@@ -15,5 +15,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::patch('/options/{resource}/{attribute}/{value}', 'OptionsController@index');
 Route::get('/options/{resource}/{attribute}/{value}', 'OptionsController@index');

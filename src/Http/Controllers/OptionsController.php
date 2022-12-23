@@ -35,9 +35,7 @@ class OptionsController extends Controller
         $fields = $resource->updateFields($request);
         
         if ($field = $fields->findFieldByAttribute($attribute)) {
-            if ($attributes = $request->get('attributes')) {
-                return $field->getValues($attributes);
-            }
+            return $field->getValues($value);
         }
 
         return [];

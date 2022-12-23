@@ -57,12 +57,12 @@ class DependFill extends Field
         return $this;
     }
 
-    public function getValues($value='')
+    public function getValues($attributes)
     {
-        $values = is_callable($this->updateCallback)?call_user_func($this->updateCallback, $value): [];
+        $values = is_callable($this->updateCallback)?call_user_func($this->updateCallback, $attributes): [];
 
         foreach ($this->updateCallbacks as $updateCallbackKey => $updateCallback) {
-            $values[$updateCallbackKey] = (is_callable($updateCallback)?call_user_func($updateCallback, $value): []);    
+            $values[$updateCallbackKey] = (is_callable($updateCallback)?call_user_func($updateCallback, $attributes): []);    
         }
      
         \Log::info(print_r($values,true));

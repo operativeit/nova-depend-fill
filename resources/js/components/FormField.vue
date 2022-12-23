@@ -57,11 +57,7 @@ export default {
      */
     update(value) {
         if (this.value = value) {
-            let payload = {
-                attributes : this.$refs.targets.map( (target) => target.field.attribute)
-            };
-
-            Nova.request().patch('/nova-vendor/eom-depend-fill/options/'+this.resourceName+'/'+this.field.attribute+'/'+value, payload).then(response => {
+            Nova.request().get('/nova-vendor/eom-depend-fill/options/'+this.resourceName+'/'+this.field.attribute+'/'+value).then(response => {
                 let data = response.data
                 this.$refs.targets.forEach( (target) => {
                     target.value = data[target.field.attribute];

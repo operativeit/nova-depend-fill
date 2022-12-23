@@ -1,10 +1,14 @@
-# Installation
+# Nova depend fill
+## Installation
 
 ```bash
 composer require eom-plus/nova-depend-fill
 ```
+## Requirements
+- `php: >=8.0`
+- `laravel/nova: ^4.0`
 
-# Description
+## Description
 
 Fill Laravel Nova field based on value from other field.
 
@@ -14,8 +18,7 @@ https://github.com/klepak/nova-depend-fill/
 You can fill one or multiple fields. Values are fetch from callback set to method *updateValuesUsing()*. 
 You can also using magic methods such *update[Field]ValueUsing()* (eg: updateEmailValueUsing) with individual callback per target field.
 
-
-# Usage
+## Usage
 
 ```php
 DependFill::make('template')

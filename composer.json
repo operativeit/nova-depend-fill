@@ -1,6 +1,6 @@
 {
     "name": "eom-plus/nova-depend-fill",
-    "description": "A Laravel Nova field.",
+    "description": "Fill Laravel Nova field based on value from other field.",
     "keywords": [
         "laravel",
         "nova"

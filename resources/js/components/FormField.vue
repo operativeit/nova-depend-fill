@@ -40,10 +40,11 @@ export default {
                 wAttributes.forEach((wAttribute) => {
                     component.$watch( wAttribute, (value) => {
                         if (component.field.component === 'morph-to-field') {
-                            value = [ component.currentFieldValues.source_type, value.value ]
+                            value = [ component.currentFieldValues[component.field.attribute+'_type'], value.value ]
                         } else {
                             value = value.value;
                         }
+                        
                         this.update(value, attribute);
                     })
                    

@@ -13,29 +13,43 @@ use Illuminate\Support\Arr;
 
 class OptionsController extends Controller
 {
-    public static function traverseFields($fields, $pad='') {
-        $result = [];
-        foreach ($fields as $field) {
-            if ($field->component == 'nova-flexible-content') {
-                foreach ($field->meta['layouts'] as $layout) {
-                    $result[ $layout->name() ] = self::traverseFields($layout->fields(), $pad."\t");
-                }
-            } else if ($field->component == 'simple-repeatable') {
-                $result[ $field->attribute ] = self::traverseFields($field->row()->fields(), $pad."\t");
-            } else {
-                $result[ $field->attribute ] = $field;
-            }
-        }
-        return $result;
-    }
-
-    public function index(NovaRequest $request, $resource, $attribute, $value)
+    public function values(NovaRequest $request, $resource, $attribute)
     {
         $resource = $request->newResource();
         $fields = $resource->updateFields($request);
         
         if ($field = $fields->findFieldByAttribute($attribute)) {
             return $field->getValues($value);
+        }
+
+        return [];
+    }
+
+    public function options(NovaRequest $request, $resource, $attribute)
+    {
+        $resource = $request->newResource();
+        $fields = $resource->updateFields($request);
+
+        $origin = $request->get('origin');
+        $value = $request->get('value');
+
+        if ($field = $fields->findFieldByAttribute($attribute)) {
+            if ($origin && $originField = $fields->findFieldByAttribute($origin)) {
+
+                if ($originField instanceOf \Laravel\Nova\Fields\MorphTo) {
+                    $morphToTypes = Arr::keyBy($originField->morphToTypes,'value');
+
+                    list($originKey, $originValue) = $value;
+                    $originResource = $morphToTypes[$originKey]['type'];
+                    $originModel = $originResource::$model;
+
+                    return $field->getOptions($originValue, $originModel);
+        
+                } else {
+                    return $field->getOptions($value);
+                }
+
+            }
         }
 
         return [];

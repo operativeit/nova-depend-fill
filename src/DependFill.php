@@ -10,6 +10,9 @@ class DependFill extends Field
     protected $updateCallback;
     protected $updateCallbacks = [];
 
+    protected $optionsCallback;
+    protected $optionsCallbacks = [];
+
     /**
      * The field's component.
      *
@@ -18,14 +21,17 @@ class DependFill extends Field
     public $component = 'eom-depend-fill';
 
     /**
-     * Set the field
+     * NovaDependencyContainer constructor.
      *
-     * @param  Field  $field
-     * @return $this
+     * @param $fields
+     * @param null $attribute
+     * @param null $resolveCallback
      */
-    public function field($field)
+    public function __construct($attribute, $fields = [])
     {
-        return $this->withMeta(['fields' => [ $field ]]);
+        parent::__construct('', $attribute);
+        $this->withMeta(['fields' => $fields]);
+        $this->withMeta(['dependencies' => []]);
     }
 
     /**
@@ -38,23 +44,37 @@ class DependFill extends Field
     {
         return $this->withMeta(['fields' => $fields]); 
     }
-
-
+    
     /**
      * Set the dependsOn
      *
      * @param  Field  $dependsOn
      * @return $this
      */
-    public function dependsOn($dependsOn)
+    public function dependsOn($field, $value = null)
     {
-        return $this->withMeta(['dependsOn' => $dependsOn]);
+        return $this->withMeta([
+            'dependencies' => array_merge($this->meta['dependencies'], [
+                $field
+            ])
+        ]);
     }
 
     public function options($options)
     {
         $this->options = $options;
         return $this;
+    }
+
+    public function getOptions($value, $model = null)
+    {
+        $options = is_callable($this->optionsCallback)?call_user_func($this->optionsCallback, $value, $model): [];
+
+        foreach ($this->optionsCallbacks as $optionsCallbackKey => $optionsCallback) {
+            $options[$optionsCallbackKey] = (is_callable($optionsCallback)?call_user_func($optionsCallback, $value, $model): []);    
+        }
+
+        return $options;
     }
 
     public function getValues($attributes)
@@ -85,6 +105,11 @@ class DependFill extends Field
         return $this;
     }
 
+    public function setOptionsUsing(callable $callback) {
+        $this->optionsCallback = $callback;
+        return $this;
+    }
+
     public function __call( $method, $arguments) {
 
         if (preg_match('/update(.+)ValueUsing/', $method, $matches)) {
@@ -94,6 +119,13 @@ class DependFill extends Field
             $this->updateCallbacks[$key] = $callback;
         }
         
+        if (preg_match('/set(.+)OptionsUsing/', $method, $matches)) {
+            $key = Str::of($matches[1])->trim()->snake()->__toString();
+            $callback = $arguments[0];
+            
+            $this->optionsCallbacks[$key] = $callback;
+        }
+
         return $this;
     }
 }

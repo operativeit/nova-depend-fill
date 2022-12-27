@@ -34,7 +34,7 @@ export default {
             const attribute =  component.field.attribute;
 
             if (find(uniq(this.field.dependencies), dependency => attribute == dependency)) {
-                console.log(attribute)
+                //console.log(attribute)
                 const wAttributes = this.findWatchableComponentAttribute(component);
                 
                 wAttributes.forEach((wAttribute) => {
@@ -71,15 +71,23 @@ export default {
         /*
         * Set the initial, internal value for the field.
         */
-        setInitialValue() {
-            this.value = this.field.value || ''
+        setInitialValue() {    
+            forEach(this.field.fields, field => {
+                //console.log('setInititalValue: ', field.attribute,  field.value);
+                //console.log(this.fieldRefs[field.attribute]);
+            })
         },
 
         /**
          * Fill the given FormData object with the field's internal value.
          */
         fill(formData) {
-            formData.append(this.field.attribute, this.value || '')
+            forEach(this.field.fields, field => {
+                if (field.fill) {
+                    //formData.append(field.attribute, field.value || '')
+                    field.fill(formData)
+                }
+            })
         },
 
         /**
@@ -97,7 +105,9 @@ export default {
                 Object.keys(this.fieldRefs).forEach((key) => {
                     if (this.fieldRefs[key]?.currentField?.options)                       
                         this.fieldRefs[key].currentField.options = data[key];
+                        this.fieldRefs[key].value = this.fieldRefs[key].currentField.value;
                 });
+               
             })
         }
     }

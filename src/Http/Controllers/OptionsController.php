@@ -27,11 +27,20 @@ class OptionsController extends Controller
 
     public function options(NovaRequest $request, $resource, $attribute)
     {
-        $resource = $request->newResource();
+        //$resource = $request->newResource();
+
+        $resource = $request->findResource(2);
         $fields = $resource->updateFields($request);
 
         $origin = $request->get('origin');
         $value = $request->get('value');
+
+        $options = [];
+
+        /*
+        public function resolve($resource, $attribute = null)
+        public function fillInto(NovaRequest $request, $model, $attribute, $requestAttribute = null)
+        */
 
         if ($field = $fields->findFieldByAttribute($attribute)) {
             if ($origin && $originField = $fields->findFieldByAttribute($origin)) {
@@ -43,15 +52,14 @@ class OptionsController extends Controller
                     $originResource = $morphToTypes[$originKey]['type'];
                     $originModel = $originResource::$model;
 
-                    return $field->getOptions($originValue, $originModel);
-        
+                    $options = $field->getOptions($originValue, $originModel);
                 } else {
-                    return $field->getOptions($value);
+                    $options = $field->getOptions($value);
                 }
 
             }
         }
 
-        return [];
+        return $options;
     }
 }

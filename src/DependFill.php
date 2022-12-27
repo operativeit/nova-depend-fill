@@ -3,6 +3,7 @@
 namespace EomPlus\Nova\Fields\DependFill;
 
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use Illuminate\Support\Str;
 
 class DependFill extends Field
@@ -87,6 +88,54 @@ class DependFill extends Field
      
         \Log::info(print_r($values,true));
         return $values;
+    }
+
+
+    /**
+     * Resolve dependency fields
+     *
+     * @param mixed $resource
+     * @param string $attribute
+     * @return array|mixed
+     */
+    public function resolve($resource, $attribute = null)
+    {
+        foreach ($this->meta['fields'] as $field) {
+            $field->resolve($resource, $attribute);
+        }
+      
+    }
+
+    /**
+     * Forward fillInto request for each field in this container
+     *
+     * @trace fill/fillForAction -> fillInto -> *
+     *
+     * @param NovaRequest $request
+     * @param $model
+     * @param $attribute
+     * @param null $requestAttribute
+     */
+    public function fillInto(NovaRequest $request, $model, $attribute, $requestAttribute = null)
+    {
+        $callbacks = [];
+        
+        \Log::info($this->meta['fields']);
+
+        foreach ($this->meta['fields'] as $field) {
+            /** @var Field $field */
+            $callbacks[] = $field->fill($request, $model);
+            \Log::info($field->attribute);
+            //\Log::info($model->{$field->attribute});
+        }
+
+        return function () use ($callbacks) {
+            foreach ($callbacks as $callback) {
+                if (is_callable($callback)) {
+                    call_user_func($callback);
+                }
+            }
+        };
     }
 
     /**

@@ -113,3 +113,13 @@ DependFill::make('template')
     ->withMeta(['value' => 'person2'])
 ])
 ```
+
+### Known bugs
+
+Fields are not rendered properly on index and details page.
+
+### Future developments
+- Add support for relevant (hide/show), readonly, disabled based on dependencies and might on expression
+- Might make options array format to match exactly the same as Nova select field
+- Support for [flexible content](https://github.com/whitecube/nova-flexible-content) 
+- ...
